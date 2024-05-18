@@ -1,0 +1,25 @@
+version: '3.8'
+
+networks:
+  development-stack:
+
+volumes:
+  localstack-data:
+    name: localstack-data
+
+services:
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    environment:
+      - SERVICES=sqs,dynamodb,cloudformation
+      - DEBUG=1
+      # Add other environment variables as needed
+    ports:
+      - 4566:4566 # Expose the desired port(s)
+      - "4510-4559:4510-4559"
+    volumes:
+      - "localstack-data:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - development-stack

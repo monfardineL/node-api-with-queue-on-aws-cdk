@@ -1,0 +1,39 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  MessagesQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: MessagesQueue
+      DelaySeconds: 0
+      MaximumMessageSize: 262144
+      MessageRetentionPeriod: 345600
+      ReceiveMessageWaitTimeSeconds: 0
+      VisibilityTimeout: 30
+      ContentBasedDeduplication: false
+      FifoQueue: false
+  BackendDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: BackendDynamoDBTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      BillingMode: PROVISIONED
+      StreamSpecification:
+        StreamEnabled: false
+      SSESpecification:
+        SSEEnabled: false
+Outputs:
+  QueueArn:
+    Description: "The ARN of the SQS queue"
+    Value: !GetAtt MessagesQueue.Arn
+  DynamoDBTableArn:
+    Description: "The ARN of the DynamoDB table"
+    Value: !GetAtt BackendDynamoDBTable.Arn
